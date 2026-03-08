@@ -1,0 +1,138 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <style>
+            .panel { position: absolute; background: white; padding: 10px; border-radius: 5px; 
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 12px; max-width: 250px;
+                    border: 1px solid #ddd; z-index: 1000; }
+            .panel h4 { margin: 0 0 5px 0; }
+            .panel ul { margin: 0; padding-left: 20px; }
+            .legend { display: grid; grid-template-columns: repeat(2,1fr); gap: 5px; }
+            .legend-item { display: flex; align-items: center; gap: 5px; }
+            .color-box { width: 15px; height: 15px; border-radius: 3px; }
+        </style>
+        <div class="panel" style="bottom:20px;right:20px;"><h4>Controls</h4>Drag nodes • Scroll zoom • Hover for details</div><div class="panel" style="top:20px;left:20px;"><h4>📌 Entry Points</h4><ul><li>app.py</li><li>classifier.py</li><li>report_generator.py</li><li>README.md</li><li>config</li><li>description</li><li>HEAD</li><li>index</li><li>... +26 more</li></ul></div><div class="panel" style="top:20px;right:20px;background:#fff3f3;"><h4>⚠️ Issues</h4><ul><li title="Undefined function called: set_page_config in AI Powered X-Ray Report Generator\app.py">Undefined function called: set_page_c...</li><li title="Undefined function called: title in AI Powered X-Ray Report Generator\app.py">Undefined function called: title in A...</li><li title="Undefined function called: file_uploader in AI Powered X-Ray Report Generator\app.py">Undefined function called: file_uploa...</li><li title="Undefined function called: image in AI Powered X-Ray Report Generator\app.py">Undefined function called: image in A...</li><li title="Undefined function called: open in AI Powered X-Ray Report Generator\app.py">Undefined function called: open in AI...</li><li title="Undefined function called: write in AI Powered X-Ray Report Generator\app.py">Undefined function called: write in A...</li><li title="Undefined function called: read in AI Powered X-Ray Report Generator\app.py">Undefined function called: read in AI...</li><li title="Undefined function called: spinner in AI Powered X-Ray Report Generator\app.py">Undefined function called: spinner in...</li><li>... +25 more</li></ul></div><div class="panel" style="bottom:20px;left:20px;"><h4>Legend</h4><div class="legend"><div class="legend-item"><div class="color-box" style="background:#FFB6C1;"></div> Python</div><div class="legend-item"><div class="color-box" style="background:#87CEEB;"></div> Function</div><div class="legend-item"><div class="color-box" style="background:#FFA07A;"></div> Undefined</div><div class="legend-item"><div class="color-box" style="background:#90EE90;"></div> Data</div><div style="grid-column:span2;"><span style="color:orange;">━━▶</span> CALLS</div><div style="grid-column:span2;"><span style="color:blue;">━━▶</span> IMPORTS</div><div style="grid-column:span2;"><span style="color:green;">━━▶</span> DATA</div></div></div>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#C0F0E8", "id": "AI Powered X-Ray Report Generator\\app.py", "label": "app.py", "shape": "hexagon", "size": 20, "title": "Type: python_file\nPath: AI Powered X-Ray Report Generator\\app.py"}, {"color": "#C0F0E8", "id": "AI Powered X-Ray Report Generator\\classifier.py", "label": "classifier.py", "shape": "hexagon", "size": 20, "title": "Type: python_file\nPath: AI Powered X-Ray Report Generator\\classifier.py"}, {"color": "#C0F0E8", "id": "AI Powered X-Ray Report Generator\\report_generator.py", "label": "report_generator.py", "shape": "hexagon", "size": 20, "title": "Type: python_file\nPath: AI Powered X-Ray Report Generator\\report_generator.py"}, {"color": "#90EE90", "id": "README.md", "label": "README.md", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: README.md"}, {"color": "#90EE90", "id": ".git\\config", "label": "config", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\config"}, {"color": "#90EE90", "id": ".git\\description", "label": "description", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\description"}, {"color": "#90EE90", "id": ".git\\HEAD", "label": "HEAD", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\HEAD"}, {"color": "#90EE90", "id": ".git\\index", "label": "index", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\index"}, {"color": "#90EE90", "id": ".git\\packed-refs", "label": "packed-refs", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\packed-refs"}, {"color": "#90EE90", "id": ".git\\hooks\\applypatch-msg.sample", "label": "applypatch-msg.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\applypatch-msg.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\commit-msg.sample", "label": "commit-msg.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\commit-msg.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\fsmonitor-watchman.sample", "label": "fsmonitor-watchman.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\fsmonitor-watchman.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\post-update.sample", "label": "post-update.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\post-update.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\pre-applypatch.sample", "label": "pre-applypatch.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\pre-applypatch.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\pre-commit.sample", "label": "pre-commit.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\pre-commit.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\pre-merge-commit.sample", "label": "pre-merge-commit.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\pre-merge-commit.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\pre-push.sample", "label": "pre-push.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\pre-push.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\pre-rebase.sample", "label": "pre-rebase.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\pre-rebase.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\pre-receive.sample", "label": "pre-receive.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\pre-receive.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\prepare-commit-msg.sample", "label": "prepare-commit-msg.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\prepare-commit-msg.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\push-to-checkout.sample", "label": "push-to-checkout.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\push-to-checkout.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\sendemail-validate.sample", "label": "sendemail-validate.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\sendemail-validate.sample"}, {"color": "#90EE90", "id": ".git\\hooks\\update.sample", "label": "update.sample", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\hooks\\update.sample"}, {"color": "#90EE90", "id": ".git\\info\\exclude", "label": "exclude", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\info\\exclude"}, {"color": "#90EE90", "id": ".git\\logs\\HEAD", "label": "HEAD", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\logs\\HEAD"}, {"color": "#90EE90", "id": ".git\\logs\\refs\\heads\\main", "label": "main", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\logs\\refs\\heads\\main"}, {"color": "#90EE90", "id": ".git\\logs\\refs\\remotes\\origin\\HEAD", "label": "HEAD", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\logs\\refs\\remotes\\origin\\HEAD"}, {"color": "#90EE90", "id": ".git\\objects\\pack\\pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.idx", "label": "pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.idx", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\objects\\pack\\pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.idx"}, {"color": "#90EE90", "id": ".git\\objects\\pack\\pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.pack", "label": "pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.pack", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\objects\\pack\\pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.pack"}, {"color": "#90EE90", "id": ".git\\objects\\pack\\pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.rev", "label": "pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.rev", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\objects\\pack\\pack-fbecce4df0034b9ab79a3a067171ba47b7eb5a56.rev"}, {"color": "#90EE90", "id": ".git\\refs\\heads\\main", "label": "main", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\refs\\heads\\main"}, {"color": "#90EE90", "id": ".git\\refs\\remotes\\origin\\HEAD", "label": "HEAD", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: .git\\refs\\remotes\\origin\\HEAD"}, {"color": "#90EE90", "id": "AI Powered X-Ray Report Generator\\covid_classifier.pth", "label": "covid_classifier.pth", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: AI Powered X-Ray Report Generator\\covid_classifier.pth"}, {"color": "#90EE90", "id": "AI Powered X-Ray Report Generator\\requirements.txt", "label": "requirements.txt", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: AI Powered X-Ray Report Generator\\requirements.txt"}, {"color": "#87CEEB", "id": "AI Powered X-Ray Report Generator\\app.py::main", "label": "main", "shape": "box", "size": 20, "title": "Type: function\nName: main\nDefined in: AI Powered X-Ray Report Generator\\app.py"}, {"color": "#87CEEB", "id": "AI Powered X-Ray Report Generator\\classifier.py::predict_class", "label": "predict_class", "shape": "box", "size": 20, "title": "Type: function\nName: predict_class\nDefined in: AI Powered X-Ray Report Generator\\classifier.py"}, {"color": "#87CEEB", "id": "AI Powered X-Ray Report Generator\\report_generator.py::generate_report", "label": "generate_report", "shape": "box", "size": 20, "title": "Type: function\nName: generate_report\nDefined in: AI Powered X-Ray Report Generator\\report_generator.py"}, {"color": "#FFA07A", "id": "UNDEF::set_page_config", "label": "set_page_config ?", "shape": "box", "size": 20, "title": "Type: function\nName: set_page_config\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::title", "label": "title ?", "shape": "box", "size": 20, "title": "Type: function\nName: title\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::file_uploader", "label": "file_uploader ?", "shape": "box", "size": 20, "title": "Type: function\nName: file_uploader\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::image", "label": "image ?", "shape": "box", "size": 20, "title": "Type: function\nName: image\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::open", "label": "open ?", "shape": "box", "size": 20, "title": "Type: function\nName: open\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::write", "label": "write ?", "shape": "box", "size": 20, "title": "Type: function\nName: write\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::read", "label": "read ?", "shape": "box", "size": 20, "title": "Type: function\nName: read\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::spinner", "label": "spinner ?", "shape": "box", "size": 20, "title": "Type: function\nName: spinner\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::success", "label": "success ?", "shape": "box", "size": 20, "title": "Type: function\nName: success\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::subheader", "label": "subheader ?", "shape": "box", "size": 20, "title": "Type: function\nName: subheader\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::mobilenet_v2", "label": "mobilenet_v2 ?", "shape": "box", "size": 20, "title": "Type: function\nName: mobilenet_v2\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::Linear", "label": "Linear ?", "shape": "box", "size": 20, "title": "Type: function\nName: Linear\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::load_state_dict", "label": "load_state_dict ?", "shape": "box", "size": 20, "title": "Type: function\nName: load_state_dict\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::load", "label": "load ?", "shape": "box", "size": 20, "title": "Type: function\nName: load\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::eval", "label": "eval ?", "shape": "box", "size": 20, "title": "Type: function\nName: eval\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::Compose", "label": "Compose ?", "shape": "box", "size": 20, "title": "Type: function\nName: Compose\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::Resize", "label": "Resize ?", "shape": "box", "size": 20, "title": "Type: function\nName: Resize\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::ToTensor", "label": "ToTensor ?", "shape": "box", "size": 20, "title": "Type: function\nName: ToTensor\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::convert", "label": "convert ?", "shape": "box", "size": 20, "title": "Type: function\nName: convert\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::unsqueeze", "label": "unsqueeze ?", "shape": "box", "size": 20, "title": "Type: function\nName: unsqueeze\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::transform", "label": "transform ?", "shape": "box", "size": 20, "title": "Type: function\nName: transform\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::no_grad", "label": "no_grad ?", "shape": "box", "size": 20, "title": "Type: function\nName: no_grad\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::model", "label": "model ?", "shape": "box", "size": 20, "title": "Type: function\nName: model\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::item", "label": "item ?", "shape": "box", "size": 20, "title": "Type: function\nName: item\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::argmax", "label": "argmax ?", "shape": "box", "size": 20, "title": "Type: function\nName: argmax\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::pipeline", "label": "pipeline ?", "shape": "box", "size": 20, "title": "Type: function\nName: pipeline\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#FFA07A", "id": "UNDEF::get", "label": "get ?", "shape": "box", "size": 20, "title": "Type: function\nName: get\n\u26a0\ufe0f UNDEFINED FUNCTION"}, {"color": "#90EE90", "id": "temp.jpg", "label": "temp.jpg", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: temp.jpg"}, {"color": "#90EE90", "id": "covid_classifier.pth", "label": "covid_classifier.pth", "shape": "dot", "size": 20, "title": "Type: data_file\nPath: covid_classifier.pth"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::set_page_config", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::title", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::file_uploader", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::image", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::open", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x3)", "to": "UNDEF::write", "width": 4}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::read", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::spinner", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "AI Powered X-Ray Report Generator\\classifier.py::predict_class", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "UNDEF::success", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x2)", "to": "UNDEF::subheader", "width": 3}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "CALLS (x1)", "to": "AI Powered X-Ray Report Generator\\report_generator.py::generate_report", "width": 2}, {"arrows": "to", "color": "green", "from": "AI Powered X-Ray Report Generator\\app.py", "title": "READ (x1)", "to": "temp.jpg", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::mobilenet_v2", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::Linear", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::load_state_dict", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::load", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::eval", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::Compose", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::Resize", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::ToTensor", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::convert", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::open", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::unsqueeze", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::transform", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::no_grad", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::model", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::item", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "CALLS (x1)", "to": "UNDEF::argmax", "width": 2}, {"arrows": "to", "color": "green", "from": "AI Powered X-Ray Report Generator\\classifier.py", "title": "READ (x1)", "to": "covid_classifier.pth", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\report_generator.py", "title": "CALLS (x1)", "to": "UNDEF::pipeline", "width": 2}, {"arrows": "to", "color": "orange", "from": "AI Powered X-Ray Report Generator\\report_generator.py", "title": "CALLS (x1)", "to": "UNDEF::get", "width": 2}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"layout": {"hierarchical": {"enabled": true, "direction": "UD", "sortMethod": "directed"}}, "physics": {"enabled": false}, "interaction": {"hover": true, "navigationButtons": true}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
