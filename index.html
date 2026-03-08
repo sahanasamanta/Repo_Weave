@@ -449,20 +449,19 @@
 
         function displayGraph() {
             const container = document.getElementById('graph-tab');
-            
+    
             if (!currentData || !currentData.graph) {
                 container.innerHTML = '<p>Graph data not available.</p>';
                 return;
             }
 
-            // Using the same logic as the old working code
             container.innerHTML = `
                 <div class="graph-placeholder">
                     <h3>📊 Dependency Graph</h3>
                     <p>Your graph has ${currentData.graph.nodes.length} nodes and ${currentData.graph.edges.length} edges.</p>
                     <p style="margin-top: 20px;">
-                        <a href="dependency_graph.png" target="_blank">📷 View Static Graph (PNG)</a><br>
-                        <a href="dependency_graph.html" target="_blank" class="secondary">🌐 View Interactive Graph (HTML)</a>
+                        <a href="REPOWEAVE/dependency_graph.png" target="_blank">📷 View Static Graph (PNG)</a><br>
+                        <a href="REPOWEAVE/dependency_graph.html" target="_blank">🌐 View Interactive Graph (HTML)</a>
                     </p>
                     <p style="margin-top: 20px; font-size: 14px;">
                         Graph files are generated in the Lambda environment.<br>
@@ -471,7 +470,6 @@
                 </div>
             `;
         }
-
         function showError(message) {
             const errorDiv = document.getElementById('error');
             errorDiv.textContent = `Error: ${message}`;
@@ -496,3 +494,4 @@
     </script>
 </body>
 </html>
+
