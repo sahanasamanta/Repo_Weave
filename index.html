@@ -223,7 +223,7 @@
             background: #f7fafc;
             border: 2px dashed #cbd5e0;
             border-radius: 8px;
-            padding: 60px;
+            padding: 40px;
             text-align: center;
             color: #718096;
         }
@@ -232,10 +232,25 @@
             color: #667eea;
             text-decoration: none;
             font-weight: 600;
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
         }
 
         .graph-placeholder a:hover {
-            text-decoration: underline;
+            background: #5a67d8;
+            text-decoration: none;
+        }
+
+        .graph-placeholder a.secondary {
+            background: #48bb78;
+        }
+
+        .graph-placeholder a.secondary:hover {
+            background: #38a169;
         }
 
         footer {
@@ -269,9 +284,9 @@
             <div class="stats-grid" id="statsGrid"></div>
 
             <div class="tabs">
-                <button class="tab active" onclick="showIssuesTab(event)">Issues</button>
-                <button class="tab" onclick="showSuggestionsTab(event)">AI Suggestions</button>
-                <button class="tab" onclick="showGraphTab(event)">Graph</button>
+                <button class="tab active" onclick="switchTab('issues', event)">Issues (0)</button>
+                <button class="tab" onclick="switchTab('suggestions', event)">AI Suggestions</button>
+                <button class="tab" onclick="switchTab('graph', event)">Graph</button>
             </div>
 
             <div class="content-section">
@@ -371,7 +386,7 @@
             displaySuggestions(data.ai_fixes);
 
             // Show first tab by default
-            switchTab('issues');
+            switchTab('issues', null);
         }
 
         function displayIssues(issues) {
@@ -411,32 +426,13 @@
             '</div>';
         }
 
-        // Tab switching functions with proper event handling
-        function showIssuesTab(event) {
-            updateActiveTab(event.target);
-            switchTab('issues');
-        }
+        function switchTab(tabName, event) {
+            // Update tab buttons if event exists
+            if (event) {
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                event.target.classList.add('active');
+            }
 
-        function showSuggestionsTab(event) {
-            updateActiveTab(event.target);
-            switchTab('suggestions');
-        }
-
-        function showGraphTab(event) {
-            updateActiveTab(event.target);
-            switchTab('graph');
-        }
-
-        function updateActiveTab(clickedTab) {
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            // Add active class to clicked tab
-            clickedTab.classList.add('active');
-        }
-
-        function switchTab(tabName) {
             // Hide all tabs
             document.getElementById('issues-tab').style.display = 'none';
             document.getElementById('suggestions-tab').style.display = 'none';
@@ -453,17 +449,24 @@
 
         function displayGraph() {
             const container = document.getElementById('graph-tab');
+            
             if (!currentData || !currentData.graph) {
                 container.innerHTML = '<p>Graph data not available.</p>';
                 return;
             }
 
+            // Using the same logic as the old working code
             container.innerHTML = `
                 <div class="graph-placeholder">
                     <h3>📊 Dependency Graph</h3>
                     <p>Your graph has ${currentData.graph.nodes.length} nodes and ${currentData.graph.edges.length} edges.</p>
+                    <p style="margin-top: 20px;">
+                        <a href="dependency_graph.png" target="_blank">📷 View Static Graph (PNG)</a><br>
+                        <a href="dependency_graph.html" target="_blank" class="secondary">🌐 View Interactive Graph (HTML)</a>
+                    </p>
                     <p style="margin-top: 20px; font-size: 14px;">
-                        Graph structure is shown in the JSON response above.
+                        Graph files are generated in the Lambda environment.<br>
+                        For demo purposes, the structure is shown in JSON format above.
                     </p>
                 </div>
             `;
@@ -484,6 +487,12 @@
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
+
+        // Auto-analyze on page load (optional)
+        window.onload = function() {
+            // Uncomment to auto-analyze on load
+            // analyzeRepo();
+        };
     </script>
 </body>
 </html>
