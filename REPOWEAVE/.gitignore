@@ -1,0 +1,56 @@
+# Node modules
+node_modules/
+package-lock.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+.env/
+.env/
+
+# Environment variables
+.env
+
+# AWS credentials
+.aws/
+credentials
+config
+
+# AWS Serverless
+.serverless/
+.serverless/**/*
+
+# Secrets
+secrets.json
+config.json
+keys.json
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Your project specific
+workspace/
+workspace/**/*
+dependency_graph.*
+*.png
+*.html
+*.json
+!index.html
+**/.git/
+
+# IDE
+.vscode/
+.idea/
+
+# Temp files
+*.tmp
+*.temp
+*.bak

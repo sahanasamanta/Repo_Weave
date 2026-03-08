@@ -1,0 +1,65 @@
+service: repo-analyzer
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  timeout: 300
+  memorySize: 1024  # 1GB RAM
+  layers:
+    - arn:aws:lambda:us-east-1:553035198032:layer:git-lambda2:8
+  stage: dev
+  environment:
+    # add Bedrock 
+    BEDROCK_ENABLED: true
+    BEDROCK_MODEL_ID: amazon.nova-pro-v1:0
+  
+  # IAM permissions your Lambda needs
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - bedrock:InvokeModel
+        - bedrock:InvokeModelWithResponseStream
+        - aws-marketplace:ViewSubscriptions   
+        - aws-marketplace:Subscribe            
+        - aws-marketplace:Unsubscribe 
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::repo-analyzer-*/*"
+
+functions:
+  analyze:
+    handler: lambda_handler.lambda_handler
+    events:
+      - http:
+          path: analyze
+          method: post
+          cors: true
+      - http:
+          path: analyze
+          method: get
+          cors: true
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: false
+    layer: false
+    fileName: requirements-lambda.txt
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!.venv/**'
+    - '!__pycache__/**'
+    - '!*.pyc'
+    - '!.git/**'
+    - '!dependency_graph.*'  # Don't package output files
+    - '!workspace/**'  # Don't package cloned repos

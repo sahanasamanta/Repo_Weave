@@ -1,0 +1,12 @@
+gitpython
+nbformat 
+pandas
+boto3
+pyvis
+networkx>=2.8
+matplotlib>=3.5
+netgraph>=4.3  # For hierarchical layouts without Graphviz
+plotly>=5.13   # For interactive HTML export
+numpy>=1.21
+gitpython>=3.1
+boto3>=1.26 
